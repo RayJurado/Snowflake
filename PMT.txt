@@ -1,0 +1,39 @@
+USE PS_COURSES;
+
+CREATE FUNCTION PMT(Rate FLOAT
+	,Periods INT
+	,Present FLOAT
+	,Future FLOAT
+	,Type INT)
+                    
+RETURNS FLOAT
+AS'
+SET @Type = ISNULL(@Type, 0);
+		SET @Future = ISNULL(@Future, 0);
+		DECLARE @Result AS FLOAT = 0;
+		DECLARE @Term AS FLOAT = 0;
+
+		IF @Rate=0
+		BEGIN
+			SET @Result=(@Present+@Future)/@Periods;
+		END --IF @Rate=0
+		ELSE
+		BEGIN --IF @Rate <> 0
+			SET @term = POWER(1+@rate, @periods);
+			
+			IF @Type=1
+			BEGIN
+				SET @Result = (@Future*@Rate / (@Term-1) + @Present*@Rate / (1-1/@Term)) / (1+@Rate)
+			END
+			
+			ELSE
+			BEGIN
+				SET @Result = @Future*@Rate/(@term-1)+@Present*@Rate / (1-1/@Term)
+			END
+
+		END --IF @Rate <> 0
+
+        RETURN -@Result
+'
+
+
